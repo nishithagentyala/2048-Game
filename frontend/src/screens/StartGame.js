@@ -7,8 +7,9 @@ const StartGame = () => {
   const { userInfo } = userLogin
   const history = useNavigate()
   const StartGame = () => {
-    if (userInfo) history('/game')
-    else history('/login')
+    if (userInfo) {
+      history('/game')
+    } else history('/login')
   }
   return (
     <div className='text-center m-5'>
