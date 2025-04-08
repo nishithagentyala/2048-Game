@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios from "axios";
 import {
   ADD_SCORE_FAIL,
   ADD_SCORE_REQUEST,
@@ -9,37 +9,41 @@ import {
   SCORE_ALL_DELETE_FAIL,
   SCORE_ALL_DELETE_REQUEST,
   SCORE_ALL_DELETE_SUCCESS,
-  SCORE_DELETE_FAIL,
-  SCORE_DELETE_REQUEST,
-  SCORE_DELETE_SUCCESS,
-} from '../constants/scoreConstants'
+} from "../constants/scoreConstants";
 
-export const addScores = (s, best) => async (dispatch, getState) => {
+const getAuthConfig = (getState, contentType = "application/json") => {
+  const {
+    userLogin: { userInfo },
+  } = getState();
+
+  return {
+    headers: {
+      Authorization: `Bearer ${userInfo.token}`,
+      ...(contentType && { "Content-Type": contentType }),
+    },
+  };
+};
+
+export const addScores = (score, id) => async (dispatch, getState) => {
   try {
     dispatch({
       type: ADD_SCORE_REQUEST,
-    })
-    const {
-      userLogin: { userInfo },
-    } = getState()
+    });
 
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    }
+    const config = getAuthConfig(getState);
+
     const { data } = await axios.post(
-      `http://localhost:4000/api/game`,
-      { s, best },
+      `http://localhost:4000/users/score`,
+      { score, id },
       config
-    )
+    );
+
+    console.log(data); // optional
 
     dispatch({
       type: ADD_SCORE_SUCCESS,
       payload: data,
-    })
-    localStorage.setItem('scores', JSON.stringify(data))
+    });
   } catch (error) {
     dispatch({
       type: ADD_SCORE_FAIL,
@@ -47,34 +51,27 @@ export const addScores = (s, best) => async (dispatch, getState) => {
         error.response && error.response.data.message
           ? error.response.data.message
           : error.message,
-    })
-  }
-}
+    });
 
-export const listMyGames = () => async (dispatch, getState) => {
+    console.log(error); // optional
+  }
+};
+
+export const listMyGames = (id) => async (dispatch, getState) => {
   try {
     dispatch({
       type: LIST_MY_GAMES_REQUEST,
-    })
-    const {
-      userLogin: { userInfo },
-    } = getState()
-
-    const config = {
-      headers: {
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    }
-
+    });
+    const config = getAuthConfig(getState, null);
     const { data } = await axios.get(
-      `http://localhost:4000/api/game/mygames`,
+      `http://localhost:4000/users/score/${id}`,
       config
-    )
+    );
 
     dispatch({
       type: LIST_MY_GAMES_SUCCESS,
       payload: data,
-    })
+    });
   } catch (error) {
     dispatch({
       type: LIST_MY_GAMES_FAIL,
@@ -82,51 +79,18 @@ export const listMyGames = () => async (dispatch, getState) => {
         error.response && error.response.data.message
           ? error.response.data.message
           : error.message,
-    })
+    });
   }
-}
-
-export const deleteScore = (id) => async (dispatch, getState) => {
-  try {
-    dispatch({ type: SCORE_DELETE_REQUEST })
-    const {
-      userLogin: { userInfo },
-    } = getState()
-
-    const config = {
-      headers: {
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    }
-    await axios.delete(`http://localhost:4000/api/game/mygames/${id}`, config)
-    dispatch({ type: SCORE_DELETE_SUCCESS })
-  } catch (error) {
-    dispatch({
-      type: SCORE_DELETE_FAIL,
-      payload:
-        error.response && error.response.data.message
-          ? error.response.data.message
-          : error.message,
-    })
-  }
-}
+};
 
 export const deleteAllScores = () => async (dispatch, getState) => {
   try {
-    dispatch({ type: SCORE_ALL_DELETE_REQUEST })
-    const {
-      userLogin: { userInfo },
-    } = getState()
+    dispatch({ type: SCORE_ALL_DELETE_REQUEST });
+    const config = getAuthConfig(getState, null);
 
-    const config = {
-      headers: {
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    }
+    await axios.delete(`http://localhost:4000/users/score`, config);
 
-    await axios.delete(`http://localhost:4000/api/game/mygames`, config)
-
-    dispatch({ type: SCORE_ALL_DELETE_SUCCESS })
+    dispatch({ type: SCORE_ALL_DELETE_SUCCESS });
   } catch (error) {
     dispatch({
       type: SCORE_ALL_DELETE_FAIL,
@@ -134,6 +98,6 @@ export const deleteAllScores = () => async (dispatch, getState) => {
         error.response && error.response.data.message
           ? error.response.data.message
           : error.message,
-    })
+    });
   }
-}
+};
