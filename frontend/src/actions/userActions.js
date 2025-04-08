@@ -22,7 +22,7 @@ export const loginUser = (email, password) => async (dispatch) => {
       headers: { "Content-Type": "application/json" },
     };
     const { data } = await axios.post(
-      "http://localhost:4000/users/login",
+      "https://two048-game-1.onrender.com/users/login",
       {
         email,
         password,
@@ -49,7 +49,7 @@ export const registerUser = (name, email, password) => async (dispatch) => {
       headers: { "Content-Type": "application/json" },
     };
     const { data } = await axios.post(
-      "http://localhost:4000/users/register",
+      "https://two048-game-1.onrender.com/users/register",
       {
         name,
         email,
@@ -96,7 +96,7 @@ export const getUserDetails = (id) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.get(
-      ` http://localhost:4000/users/${id}`,
+      ` https://two048-game-1.onrender.com/users/${id}`,
       config
     );
     dispatch({
@@ -127,7 +127,7 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
       },
     };
     const { data } = await axios.put(
-      `http://localhost:4000/users/profile`,
+      `https://two048-game-1.onrender.com/users/profile`,
       user,
       config
     );

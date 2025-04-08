@@ -33,7 +33,7 @@ export const addScores = (score, id) => async (dispatch, getState) => {
     const config = getAuthConfig(getState);
 
     const { data } = await axios.post(
-      `http://localhost:4000/users/score`,
+      `https://two048-game-1.onrender.com/users/score`,
       { score, id },
       config
     );
@@ -64,7 +64,7 @@ export const listMyGames = (id) => async (dispatch, getState) => {
     });
     const config = getAuthConfig(getState, null);
     const { data } = await axios.get(
-      `http://localhost:4000/users/score/${id}`,
+      `https://two048-game-1.onrender.com/users/score/${id}`,
       config
     );
 
@@ -88,7 +88,10 @@ export const deleteAllScores = () => async (dispatch, getState) => {
     dispatch({ type: SCORE_ALL_DELETE_REQUEST });
     const config = getAuthConfig(getState, null);
 
-    await axios.delete(`http://localhost:4000/users/score`, config);
+    await axios.delete(
+      `https://two048-game-1.onrender.com/users/score`,
+      config
+    );
 
     dispatch({ type: SCORE_ALL_DELETE_SUCCESS });
   } catch (error) {
